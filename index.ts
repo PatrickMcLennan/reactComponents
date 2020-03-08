@@ -3,8 +3,9 @@ import path from "path";
 import inquirer from "inquirer";
 
 interface IAnswers {
-  name: String;
+  name: string;
   language: string;
+  reducer: boolean;
   style: string;
   test: boolean;
 }
@@ -45,11 +46,15 @@ const newFile = (name: string, ext: string) => {
         else resolve();
       });
     // - React - //
-    if (ext.includes("x"))
+    if (ext.includes("x") && name !== ".test")
       fs.copyFile(`../blueprints/component.${ext}`, `${name}.${ext}`, (err: Error | null) => {
         if (err) return exitWithError(err);
         else resolve();
       });
+    // - To Do - Finish Testing files here - //
+    if (name.includes(".test")) {
+      fs.copyFile(`../blueprints/components`);
+    }
     // - Reducer - //
     if (name === "reducer") {
       const newFile: fs.WriteStream = fs.createWriteStream(`reducer.${ext}`);
@@ -94,18 +99,36 @@ const questions: IQuestion[] = [
 
 inquirer
   .prompt(questions)
-  .then((answers: any) => {
-    newDir(answers.name);
-    return answers;
-  })
-  .then(({ language, name, reducer, style, test }: any) => {
+  .then((answers: any) =>
+    newDir(answers.name)
+      .then(() => answers)
+      .catch((error: Error) => exitWithError(error))
+  )
+  .then(({ language, name, reducer, style, test }: IAnswers) => {
     const ext: string = language === "TypeScript" ? "ts" : "js";
     process.chdir(path.join(__dirname, name));
     return Promise.all([
       newFile(name, `${ext}x`),
       newFile(`${style === "SCSS" ? "_" : ""}${name}.style`, `${style === "SCSS" ? "scss" : ext}`),
       reducer && newFile(`reducer`, ext),
-      test && newDir(`${name}/__tests__`).then(() => newFile(`__tests__/${name}.test`, ext))
-    ]).catch(error => exitWithError(error));
+      test && newDir(`${name}/__tests__`).then(() => newFile(`__tests__/${name}.test`, `${ext}x`))
+    ])
+      .then(() => ({ name, ext }))
+      .catch((error: Error) => exitWithError(error));
+  })
+  .then(({ name, ext }: { name: string; ext: string }) => {
+    const filePath: string = `${name}/${name}.${ext}x`;
+    fs.readFile(filePath, `utf8`, (err: Error | null, fileContents: string) => {
+      const newContents = fileContents.replace(/REPLACE_ME/g, name);
+      if (err) exitWithError(err);
+      else
+        return fs.writeFile(filePath, newContents, `utf8`, (err: Error | null) => {
+          if (err) return exitWithError(err);
+          else {
+            console.log("he;;lo");
+            return process.exit(0);
+          }
+        });
+    });
   })
   .catch((error: Error) => exitWithError(error));

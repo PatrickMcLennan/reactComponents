@@ -5,3 +5,5 @@ const REPLACE_ME: Function = (): JSX.Element => {
 };
 
 export default REPLACE_ME;
+
+REPLACE_ME;

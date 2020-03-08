@@ -34,13 +34,17 @@ var newFile = function (name, ext) {
                     resolve();
             });
         // - React - //
-        if (ext.includes("x"))
+        if (ext.includes("x") && name !== ".test")
             fs_1.default.copyFile("../blueprints/component." + ext, name + "." + ext, function (err) {
                 if (err)
                     return exitWithError(err);
                 else
                     resolve();
             });
+        // - To Do - Finish Testing files here - //
+        if (name.includes(".test")) {
+            fs_1.default.copyFile("../blueprints/components");
+        }
         // - Reducer - //
         if (name === "reducer") {
             var newFile_2 = fs_1.default.createWriteStream("reducer." + ext);
@@ -84,8 +88,9 @@ var questions = [
 inquirer_1.default
     .prompt(questions)
     .then(function (answers) {
-    newDir(answers.name);
-    return answers;
+    return newDir(answers.name)
+        .then(function () { return answers; })
+        .catch(function (error) { return exitWithError(error); });
 })
     .then(function (_a) {
     var language = _a.language, name = _a.name, reducer = _a.reducer, style = _a.style, test = _a.test;
@@ -95,7 +100,27 @@ inquirer_1.default
         newFile(name, ext + "x"),
         newFile("" + (style === "SCSS" ? "_" : "") + name + ".style", "" + (style === "SCSS" ? "scss" : ext)),
         reducer && newFile("reducer", ext),
-        test && newDir(name + "/__tests__").then(function () { return newFile("__tests__/" + name + ".test", ext); })
-    ]).catch(function (error) { return exitWithError(error); });
+        test && newDir(name + "/__tests__").then(function () { return newFile("__tests__/" + name + ".test", ext + "x"); })
+    ])
+        .then(function () { return ({ name: name, ext: ext }); })
+        .catch(function (error) { return exitWithError(error); });
+})
+    .then(function (_a) {
+    var name = _a.name, ext = _a.ext;
+    var filePath = name + "/" + name + "." + ext + "x";
+    fs_1.default.readFile(filePath, "utf8", function (err, fileContents) {
+        var newContents = fileContents.replace(/REPLACE_ME/g, name);
+        if (err)
+            exitWithError(err);
+        else
+            return fs_1.default.writeFile(filePath, newContents, "utf8", function (err) {
+                if (err)
+                    return exitWithError(err);
+                else {
+                    console.log("he;;lo");
+                    return process.exit(0);
+                }
+            });
+    });
 })
     .catch(function (error) { return exitWithError(error); });
