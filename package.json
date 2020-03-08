@@ -1,0 +1,22 @@
+{
+  "name": "react_component",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/inquirer": "^6.5.0",
+    "@types/node": "^13.9.0",
+    "@types/react": "^16.9.23",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "inquirer": "^7.0.6"
+  }
+}
