@@ -42,9 +42,9 @@ var newFile = function (name, ext) {
                     resolve();
             });
         // - To Do - Finish Testing files here - //
-        if (name.includes(".test")) {
-            fs_1.default.copyFile("../blueprints/components");
-        }
+        // if (name.includes(".test")) {
+        //   fs.copyFile(`../blueprints/components`);
+        // }
         // - Reducer - //
         if (name === "reducer") {
             var newFile_2 = fs_1.default.createWriteStream("reducer." + ext);

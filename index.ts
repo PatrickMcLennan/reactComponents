@@ -52,9 +52,9 @@ const newFile = (name: string, ext: string) => {
         else resolve();
       });
     // - To Do - Finish Testing files here - //
-    if (name.includes(".test")) {
-      fs.copyFile(`../blueprints/components`);
-    }
+    // if (name.includes(".test")) {
+    //   fs.copyFile(`../blueprints/components`);
+    // }
     // - Reducer - //
     if (name === "reducer") {
       const newFile: fs.WriteStream = fs.createWriteStream(`reducer.${ext}`);
